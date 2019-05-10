@@ -1,6 +1,6 @@
-package lk.pontusfa.fullhund.descriptor;
+package lk.pontusfa.fullhund.assembler;
 
-import lk.pontusfa.fullhund.descriptor.WebAppDescriptorVerifier.Error;
+import lk.pontusfa.fullhund.assembler.WebAppDescriptorVerifier.Error;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

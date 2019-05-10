@@ -1,11 +1,11 @@
-package lk.pontusfa.fullhund.descriptor;
+package lk.pontusfa.fullhund.assembler;
 
 import org.junit.jupiter.api.Test;
 
 import java.io.StringReader;
 
-import static lk.pontusfa.fullhund.descriptor.DeploymentDescriptor.Status.COMPLETE;
-import static lk.pontusfa.fullhund.descriptor.DeploymentDescriptor.Status.ERROR;
+import static lk.pontusfa.fullhund.assembler.DeploymentDescriptor.Status.COMPLETE;
+import static lk.pontusfa.fullhund.assembler.DeploymentDescriptor.Status.ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 

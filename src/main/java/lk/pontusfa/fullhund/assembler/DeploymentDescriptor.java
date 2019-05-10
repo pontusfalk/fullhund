@@ -1,11 +1,11 @@
-package lk.pontusfa.fullhund.descriptor;
+package lk.pontusfa.fullhund.assembler;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 import static java.util.Collections.unmodifiableCollection;
 
-public final class DeploymentDescriptor {
+class DeploymentDescriptor {
     private final Collection<String> errors = new ArrayList<>();
     private WebAppDescriptor webAppDescriptor = new WebAppDescriptor();
     private Status status = Status.ERROR;

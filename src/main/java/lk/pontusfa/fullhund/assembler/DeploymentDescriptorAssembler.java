@@ -1,7 +1,7 @@
-package lk.pontusfa.fullhund.descriptor;
+package lk.pontusfa.fullhund.assembler;
 
-import lk.pontusfa.fullhund.descriptor.DeploymentDescriptor.Status;
-import lk.pontusfa.fullhund.descriptor.WebAppDescriptorVerifier.Error;
+import lk.pontusfa.fullhund.assembler.DeploymentDescriptor.Status;
+import lk.pontusfa.fullhund.assembler.WebAppDescriptorVerifier.Error;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;

@@ -1,4 +1,4 @@
-package lk.pontusfa.fullhund.descriptor;
+package lk.pontusfa.fullhund.assembler;
 
 import java.util.Collection;
 import java.util.EnumSet;
