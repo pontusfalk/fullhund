@@ -6,23 +6,17 @@ import lk.pontusfa.fullhund.assembler.WebAppDescriptorVerifier.Error;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import java.io.Reader;
+import java.io.InputStream;
 
 public class DeploymentDescriptorAssembler {
-    private final Reader xmlSource;
-
-    public DeploymentDescriptorAssembler(Reader xmlSource) {
-        this.xmlSource = xmlSource;
-    }
-
-    public DeploymentDescriptor assemble() {
+    public DeploymentDescriptor assemble(InputStream xmlSource) {
         DeploymentDescriptor deploymentDescriptor = new DeploymentDescriptor();
         if (xmlSource == null) {
             return deploymentDescriptor;
         }
 
         try {
-            WebAppDescriptor webAppDescriptor = parseWebAppDescriptor();
+            WebAppDescriptor webAppDescriptor = parseWebAppDescriptor(xmlSource);
             deploymentDescriptor.setWebAppDescriptor(webAppDescriptor);
             WebAppDescriptorVerifier verifier = new WebAppDescriptorVerifier(webAppDescriptor);
             for (Error error : verifier.verify()) {
@@ -37,7 +31,7 @@ public class DeploymentDescriptorAssembler {
         return deploymentDescriptor;
     }
 
-    private WebAppDescriptor parseWebAppDescriptor() throws UnparseableWebAppException {
+    private static WebAppDescriptor parseWebAppDescriptor(InputStream xmlSource) throws UnparseableWebAppException {
         try {
             JAXBContext context = JAXBContext.newInstance(WebAppDescriptor.class);
             Unmarshaller unmarshaller = context.createUnmarshaller();
