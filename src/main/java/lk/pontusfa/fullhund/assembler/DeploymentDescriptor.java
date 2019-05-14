@@ -10,7 +10,7 @@ public class DeploymentDescriptor {
     private WebAppDescriptor webAppDescriptor = new WebAppDescriptor();
     private Status status = Status.COMPLETE;
 
-    WebAppDescriptor getWebAppDescriptor() {
+    public WebAppDescriptor getWebAppDescriptor() {
         return webAppDescriptor;
     }
 

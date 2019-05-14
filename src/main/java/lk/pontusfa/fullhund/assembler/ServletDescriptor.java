@@ -2,7 +2,7 @@ package lk.pontusfa.fullhund.assembler;
 
 import javax.xml.bind.annotation.XmlElement;
 
-class ServletDescriptor {
+public class ServletDescriptor {
     @XmlElement(name = "servlet-name")
     private String servletName;
     @XmlElement(name = "servlet-class")
@@ -17,11 +17,11 @@ class ServletDescriptor {
         this.servletClass = servletClass;
     }
 
-    String getServletName() {
+    public String getServletName() {
         return servletName;
     }
 
-    String getServletClass() {
+    public String getServletClass() {
         return servletClass;
     }
 

@@ -16,11 +16,11 @@ public class WebAppDescriptor {
     private final List<ServletMappingDescriptor> servletMappingDescriptors = new ArrayList<>();
     private String version = SERVLET_VERSION;
 
-    List<ServletDescriptor> getServletDescriptors() {
+    public List<ServletDescriptor> getServletDescriptors() {
         return servletDescriptors;
     }
 
-    List<ServletMappingDescriptor> getServletMappingDescriptors() {
+    public List<ServletMappingDescriptor> getServletMappingDescriptors() {
         return servletMappingDescriptors;
     }
 

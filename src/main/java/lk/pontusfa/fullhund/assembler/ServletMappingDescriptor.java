@@ -3,7 +3,7 @@ package lk.pontusfa.fullhund.assembler;
 import javax.xml.bind.annotation.XmlElement;
 import java.util.Optional;
 
-class ServletMappingDescriptor {
+public class ServletMappingDescriptor {
     private String servletName;
     private String urlPattern;
 
@@ -17,7 +17,7 @@ class ServletMappingDescriptor {
     }
 
     @XmlElement(name = "servlet-name")
-    String getServletName() {
+    public String getServletName() {
         return servletName;
     }
 
@@ -30,7 +30,7 @@ class ServletMappingDescriptor {
     }
 
     @XmlElement(name = "url-pattern")
-    String getUrlPattern() {
+    public String getUrlPattern() {
         return urlPattern;
     }
 
@@ -38,7 +38,6 @@ class ServletMappingDescriptor {
     private void setUrlPattern(String urlPattern) {
         this.urlPattern = Optional.ofNullable(urlPattern)
                                   .map(String::trim)
-                                  .filter(s -> !s.isEmpty())
                                   .orElse(null);
     }
 
