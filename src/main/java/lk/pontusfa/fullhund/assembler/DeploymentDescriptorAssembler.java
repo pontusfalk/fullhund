@@ -8,15 +8,19 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.Reader;
 
-class DeploymentDescriptorAssembler {
+public class DeploymentDescriptorAssembler {
     private final Reader xmlSource;
 
-    DeploymentDescriptorAssembler(Reader xmlSource) {
+    public DeploymentDescriptorAssembler(Reader xmlSource) {
         this.xmlSource = xmlSource;
     }
 
-    DeploymentDescriptor assemble() {
+    public DeploymentDescriptor assemble() {
         DeploymentDescriptor deploymentDescriptor = new DeploymentDescriptor();
+        if (xmlSource == null) {
+            return deploymentDescriptor;
+        }
+
         try {
             WebAppDescriptor webAppDescriptor = parseWebAppDescriptor();
             deploymentDescriptor.setWebAppDescriptor(webAppDescriptor);

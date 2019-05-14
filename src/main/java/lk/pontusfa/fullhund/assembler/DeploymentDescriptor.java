@@ -5,10 +5,10 @@ import java.util.Collection;
 
 import static java.util.Collections.unmodifiableCollection;
 
-class DeploymentDescriptor {
+public class DeploymentDescriptor {
     private final Collection<String> errors = new ArrayList<>();
     private WebAppDescriptor webAppDescriptor = new WebAppDescriptor();
-    private Status status = Status.ERROR;
+    private Status status = Status.COMPLETE;
 
     WebAppDescriptor getWebAppDescriptor() {
         return webAppDescriptor;
@@ -18,23 +18,25 @@ class DeploymentDescriptor {
         this.webAppDescriptor = webAppDescriptor;
     }
 
-    Collection<String> getErrors() {
+    public Collection<String> getErrors() {
         return unmodifiableCollection(errors);
     }
 
-    Status getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    void setStatus(Status status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
-    void addError(String error) {
-        errors.add(error);
+    public void addError(String error) {
+        if (error != null && !error.isBlank()) {
+            errors.add(error);
+        }
     }
 
-    enum Status {
+    public enum Status {
         COMPLETE,
         ERROR
     }
