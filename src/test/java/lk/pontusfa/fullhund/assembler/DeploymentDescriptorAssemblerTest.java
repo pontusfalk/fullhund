@@ -39,14 +39,13 @@ class DeploymentDescriptorAssemblerTest {
     }
 
     @Test
-    void nullWebAppDescriptorFails() {
+    void nullWebAppDescriptorGivesEmptyDeploymentDescriptor() {
         DeploymentDescriptorAssembler assembler = new DeploymentDescriptorAssembler(null);
 
         DeploymentDescriptor descriptor = assembler.assemble();
 
-        assertThat(descriptor.getStatus()).isEqualTo(ERROR);
-        assertThat(descriptor.getErrors())
-            .containsExactly("java.lang.IllegalArgumentException: reader parameter must not be null");
+        assertThat(descriptor.getStatus()).isEqualTo(COMPLETE);
+        assertThat(descriptor.getErrors()).isEmpty();
     }
 
     @Test
