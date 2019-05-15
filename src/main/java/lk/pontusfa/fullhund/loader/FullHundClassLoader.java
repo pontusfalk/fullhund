@@ -9,6 +9,10 @@ class FullHundClassLoader extends URLClassLoader {
     FullHundClassLoader(File webAppLocation) {
         super(new URL[] {}, ClassLoader.getSystemClassLoader());
         if (webAppLocation != null) {
+            if (!webAppLocation.exists()) {
+                throw new IllegalArgumentException("web app location doesn't exist: " + webAppLocation);
+            }
+
             try {
                 addURL(webAppLocation.toURI().toURL());
             } catch (MalformedURLException e) {
