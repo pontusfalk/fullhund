@@ -40,8 +40,6 @@ public class DeploymentDescriptorAssembler {
         } catch (JAXBException e) {
             Throwable linkedException = e.getLinkedException();
             throw new UnparseableWebAppException(linkedException != null ? linkedException : e);
-        } catch (IllegalArgumentException e) {
-            throw new UnparseableWebAppException(e);
         }
     }
 }
