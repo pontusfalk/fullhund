@@ -1,6 +1,4 @@
-package lk.pontusfa.fullhund.servlet.registration;
-
-import lk.pontusfa.fullhund.servlet.NotImplementedException;
+package lk.pontusfa.fullhund.servlet;
 
 import javax.servlet.Registration;
 import javax.servlet.Servlet;

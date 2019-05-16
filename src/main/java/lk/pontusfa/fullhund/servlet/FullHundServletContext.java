@@ -1,6 +1,5 @@
 package lk.pontusfa.fullhund.servlet;
 
-import lk.pontusfa.fullhund.servlet.registration.FullHundDynamicServletRegistration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,6 +20,7 @@ public class FullHundServletContext implements ServletContext {
     private static final Logger logger = LogManager.getLogger();
 
     private final ClassLoader classLoader;
+    private final ServletMappingResolver servletMappingResolver = new ServletMappingResolver();
     private final Map<String, ServletRegistration> servletRegistrations = new HashMap<>();
 
     public FullHundServletContext(ClassLoader classLoader) {
@@ -111,6 +111,7 @@ public class FullHundServletContext implements ServletContext {
     }
 
     @Override
+    @Deprecated
     public void log(Exception exception, String msg) {
         throw new NotImplementedException();
     }
@@ -204,7 +205,7 @@ public class FullHundServletContext implements ServletContext {
                 String.format("could not add servlet %s, servlet name must be a non-empty string", servlet.getClass()));
         }
 
-        var registration = new FullHundDynamicServletRegistration(servletName, servlet);
+        var registration = new FullHundDynamicServletRegistration(servletName, servlet, servletMappingResolver);
         servletRegistrations.put(servletName, registration);
 
         return registration;

@@ -1,6 +1,4 @@
-package lk.pontusfa.fullhund.servlet.registration;
-
-import lk.pontusfa.fullhund.servlet.NotImplementedException;
+package lk.pontusfa.fullhund.servlet;
 
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.Servlet;
@@ -11,8 +9,9 @@ import java.util.Set;
 public class FullHundDynamicServletRegistration extends FullHundServletRegistration
     implements ServletRegistration.Dynamic {
 
-    public FullHundDynamicServletRegistration(String servletName, Servlet servlet) {
-        super(servletName, servlet);
+    FullHundDynamicServletRegistration(String servletName, Servlet servlet,
+                                       ServletMappingResolver servletMappingResolver) {
+        super(servletName, servlet, servletMappingResolver);
     }
 
     @Override
