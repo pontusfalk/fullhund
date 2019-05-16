@@ -1,5 +1,6 @@
 package lk.pontusfa.fullhund.servlet;
 
+import lk.pontusfa.fullhund.servlet.registration.FullHundDynamicServletRegistration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -8,10 +9,14 @@ import javax.servlet.ServletRegistration.Dynamic;
 import javax.servlet.descriptor.JspConfigDescriptor;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
+// todo: implement funcationality for methods with :
+//  UnsupportedOperationException –
+//  if this ServletContext was passed to the ServletContextListener.contextInitialized method of a
+//  ServletContextListener that was neither declared in web.xml or web-fragment.xml,
+//  nor annotated with javax.servlet.annotation.WebListener
 public class FullHundServletContext implements ServletContext {
     private static final Logger logger = LogManager.getLogger();
 
@@ -63,7 +68,7 @@ public class FullHundServletContext implements ServletContext {
     }
 
     @Override
-    public URL getResource(String path) throws MalformedURLException {
+    public URL getResource(String path) {
         throw new NotImplementedException();
     }
 
@@ -84,7 +89,7 @@ public class FullHundServletContext implements ServletContext {
 
     @Override
     @Deprecated
-    public Servlet getServlet(String name) throws ServletException {
+    public Servlet getServlet(String name) {
         throw new NotImplementedException();
     }
 
@@ -167,7 +172,13 @@ public class FullHundServletContext implements ServletContext {
 
     @Override
     @SuppressWarnings("unchecked")
+    //todo: handle servlets with servletName already added
+    //todo: annotation introspection on servlet instance
     public Dynamic addServlet(String servletName, String className) {
+        if (className == null || className.isBlank()) {
+            throw new IllegalArgumentException("servlet class must not be empty");
+        }
+
         try {
             Class<?> servletClass = classLoader.loadClass(className);
             if (!Servlet.class.isAssignableFrom(servletClass)) {
@@ -177,12 +188,17 @@ public class FullHundServletContext implements ServletContext {
             return addServlet(servletName, (Class<? extends Servlet>) servletClass);
         } catch (ClassNotFoundException e) {
             throw new IllegalArgumentException(
-                String.format("could not add servlet %s (%s)", servletName, className), e);
+                String.format("class %s not found, can't add servlet %s", className, servletName), e);
         }
     }
 
     @Override
+    //todo: handle servlets with servletName already added
+    //todo: annotation introspection on servlet instance
     public Dynamic addServlet(String servletName, Servlet servlet) {
+        if (servlet == null) {
+            throw new IllegalArgumentException("servlet must not be null");
+        }
         if (servletName == null || servletName.isBlank()) {
             throw new IllegalArgumentException(
                 String.format("could not add servlet %s, servlet name must be a non-empty string", servlet.getClass()));
@@ -195,6 +211,8 @@ public class FullHundServletContext implements ServletContext {
     }
 
     @Override
+    //todo: handle servlets with servletName already added
+    //todo: annotation introspection on servlet instance
     public Dynamic addServlet(String servletName, Class<? extends Servlet> servletClass) {
         try {
             return addServlet(servletName, createServlet(servletClass));
@@ -209,7 +227,12 @@ public class FullHundServletContext implements ServletContext {
     }
 
     @Override
+    //todo: annotation introspection on servlet instance
     public <T extends Servlet> T createServlet(Class<T> clazz) throws ServletException {
+        if (clazz == null) {
+            throw new IllegalArgumentException("class must not be null");
+        }
+
         try {
             return clazz
                        .getDeclaredConstructor()
@@ -221,12 +244,12 @@ public class FullHundServletContext implements ServletContext {
 
     @Override
     public ServletRegistration getServletRegistration(String servletName) {
-        return servletRegistrations.get(servletName);
+        return (servletName != null && !servletName.isBlank()) ? servletRegistrations.get(servletName) : null;
     }
 
     @Override
     public Map<String, ? extends ServletRegistration> getServletRegistrations() {
-        throw new NotImplementedException();
+        return Collections.unmodifiableMap(servletRegistrations);
     }
 
     @Override
@@ -245,7 +268,7 @@ public class FullHundServletContext implements ServletContext {
     }
 
     @Override
-    public <T extends Filter> T createFilter(Class<T> clazz) throws ServletException {
+    public <T extends Filter> T createFilter(Class<T> clazz) {
         throw new NotImplementedException();
     }
 
@@ -298,7 +321,7 @@ public class FullHundServletContext implements ServletContext {
     }
 
     @Override
-    public <T extends EventListener> T createListener(Class<T> clazz) throws ServletException {
+    public <T extends EventListener> T createListener(Class<T> clazz) {
         throw new NotImplementedException();
     }
 
