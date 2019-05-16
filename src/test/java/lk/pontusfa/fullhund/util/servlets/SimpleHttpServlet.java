@@ -1,4 +1,4 @@
-package lk.pontusfa.fullhund.servlets;
+package lk.pontusfa.fullhund.util.servlets;
 
 import javax.servlet.http.HttpServlet;
 

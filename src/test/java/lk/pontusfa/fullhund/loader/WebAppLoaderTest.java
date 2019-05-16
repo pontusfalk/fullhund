@@ -5,7 +5,7 @@ import lk.pontusfa.fullhund.assembler.DeploymentDescriptorAssembler;
 import lk.pontusfa.fullhund.assembler.DeploymentDescriptorBuilder;
 import lk.pontusfa.fullhund.servlet.WebApp;
 import lk.pontusfa.fullhund.servlet.WebApp.Status;
-import lk.pontusfa.fullhund.servlets.SimpleHttpServlet;
+import lk.pontusfa.fullhund.util.servlets.SimpleHttpServlet;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
