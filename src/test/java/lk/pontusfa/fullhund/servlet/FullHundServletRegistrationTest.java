@@ -67,7 +67,7 @@ class FullHundServletRegistrationTest {
     }
 
     @Test
-    void addNullMappingThrows() {
+    void addNullMappingIsIgnored() {
         registration.addMapping((String) null);
 
         assertThat(registration.getMappings()).isEmpty();

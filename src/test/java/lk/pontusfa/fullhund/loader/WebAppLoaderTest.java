@@ -28,12 +28,13 @@ class WebAppLoaderTest {
 
     @Test
     void loaderWithBadWebXmlFails() {
-        var classLoaderWithBadWebXml = classLoaderWithWebXml("<bad xml></no bueno>");
+        var classLoaderWithBadWebXml = classLoaderWithWebXml("<bad></no bueno>");
         var webAppLoader = new WebAppLoader(new DeploymentDescriptorAssembler(), classLoaderWithBadWebXml);
 
         WebApp webApp = webAppLoader.load();
 
         assertThat(webApp.getStatus()).isEqualTo(Status.FAILED_ON_LOAD);
+        assertThat(webApp.getMessages()).anyMatch(message -> message.contains("javax.xml.bind.UnmarshalException"));
     }
 
     @Test
@@ -62,6 +63,7 @@ class WebAppLoaderTest {
 
         assertThat(webApp.getStatus()).isEqualTo(Status.FAILED_ON_LOAD);
         assertThat(webApp.getServletContext().getServletRegistration("simpleServlet")).isNull();
+        assertThat(webApp.getMessages()).anyMatch(message -> message.contains("does not implement Servlet"));
     }
 
     @Test
@@ -75,6 +77,22 @@ class WebAppLoaderTest {
 
         assertThat(webApp.getStatus()).isEqualTo(Status.FAILED_ON_LOAD);
         assertThat(webApp.getServletContext().getServletRegistration("simpleServlet")).isNull();
+        assertThat(webApp.getMessages()).anyMatch(message -> message.contains("non.existent.Class not found"));
+    }
+
+    @Test
+    void loadingWithConflictingServletMappingFails() {
+        var deploymentDescriptor = new DeploymentDescriptorBuilder()
+                                       .servletDescriptor("simpleServlet", SimpleHttpServlet.class.getName())
+                                       .servletMappingDescriptor("simpleServlet", "/servletUrl")
+                                       .servletDescriptor("conflictingServlet", SimpleHttpServlet.class.getName())
+                                       .servletMappingDescriptor("conflictingServlet", "/servletUrl").build();
+        var webAppLoader = new WebAppLoader(assembler(deploymentDescriptor), classLoaderWithWebXml(""));
+
+        WebApp webApp = webAppLoader.load();
+
+        assertThat(webApp.getStatus()).isEqualTo(Status.FAILED_ON_LOAD);
+        assertThat(webApp.getMessages()).containsExactly("servlet mapping conflicts: [/servletUrl]");
     }
 
     private File explodedWarFile() {
