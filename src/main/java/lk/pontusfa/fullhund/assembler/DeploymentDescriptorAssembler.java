@@ -1,5 +1,6 @@
 package lk.pontusfa.fullhund.assembler;
 
+import lk.pontusfa.fullhund.BadWebAppConfigurationException;
 import lk.pontusfa.fullhund.assembler.DeploymentDescriptor.Status;
 import lk.pontusfa.fullhund.assembler.WebAppDescriptorVerifier.Error;
 
@@ -23,7 +24,7 @@ public class DeploymentDescriptorAssembler {
                 deploymentDescriptor.addError(error.toString());
             }
             deploymentDescriptor.setStatus(Status.COMPLETE);
-        } catch (UnparseableWebAppException e) {
+        } catch (BadWebAppConfigurationException e) {
             deploymentDescriptor.addError(e.getLocalizedMessage());
             deploymentDescriptor.setStatus(Status.ERROR);
         }
@@ -31,7 +32,7 @@ public class DeploymentDescriptorAssembler {
         return deploymentDescriptor;
     }
 
-    private static WebAppDescriptor parseWebAppDescriptor(InputStream xmlSource) throws UnparseableWebAppException {
+    private static WebAppDescriptor parseWebAppDescriptor(InputStream xmlSource) {
         try {
             JAXBContext context = JAXBContext.newInstance(WebAppDescriptor.class);
             Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -39,7 +40,7 @@ public class DeploymentDescriptorAssembler {
             return (WebAppDescriptor) unmarshaller.unmarshal(xmlSource);
         } catch (JAXBException e) {
             Throwable linkedException = e.getLinkedException();
-            throw new UnparseableWebAppException(linkedException != null ? linkedException : e);
+            throw new BadWebAppConfigurationException(linkedException != null ? linkedException : e);
         }
     }
 }
