@@ -85,12 +85,22 @@ class FullHundServletRegistrationTest {
     @Test
     void mappingsIsntUpdatedWhenMappingConflicts() {
         new FullHundServletRegistration("anotherServlet", new SimpleHttpServlet(), resolver)
-            .addMapping("/");
+            .addMapping("/", "");
 
-        Set<String> conflicts = registration.addMapping("/");
+        Set<String> conflicts = registration.addMapping("/path", "/", "", "*.html");
 
-        assertThat(conflicts).containsExactly("anotherServlet");
+        assertThat(conflicts).containsExactlyInAnyOrder("/", "");
         assertThat(registration.getMappings()).isEmpty();
+    }
+
+    @Test
+    void onlyNewMappingsAreAddedWhenReAddingMappingToSameServlet() {
+        registration.addMapping("/path");
+
+        Set<String> conflicts = registration.addMapping("/", "/path", "");
+
+        assertThat(conflicts).isEmpty();
+        assertThat(registration.getMappings()).containsExactlyInAnyOrder("/", "/path", "");
     }
 
     @Test

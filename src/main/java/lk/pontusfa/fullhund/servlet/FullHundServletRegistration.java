@@ -2,10 +2,7 @@ package lk.pontusfa.fullhund.servlet;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletRegistration;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableCollection;
@@ -23,10 +20,12 @@ class FullHundServletRegistration extends FullHundRegistration implements Servle
         if (urlPatterns == null || urlPatterns.length == 0) {
             throw new IllegalArgumentException("provide at least 1 url pattern");
         }
+        var newUrlPatterns = new ArrayList<>(Arrays.asList(urlPatterns));
+        newUrlPatterns.removeAll(servletMappingResolver.getMappingsForServlet(getName()));
 
-        var conflictingServlets = servletMappingResolver.getServletsForMappings(urlPatterns);
-        if (!conflictingServlets.isEmpty()) {
-            return conflictingServlets;
+        var conflictingUrlPatterns = servletMappingResolver.filterExistingMappings(newUrlPatterns);
+        if (!conflictingUrlPatterns.isEmpty()) {
+            return conflictingUrlPatterns;
         }
 
         Arrays.stream(urlPatterns)

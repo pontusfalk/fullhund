@@ -2,8 +2,7 @@ package lk.pontusfa.fullhund.servlet;
 
 import java.net.URI;
 import java.util.*;
-
-import static java.util.stream.Collectors.toSet;
+import java.util.stream.Collectors;
 
 public class ServletMappingResolver {
     private final Map<String, String> mappingToServlet = new HashMap<>();
@@ -25,19 +24,16 @@ public class ServletMappingResolver {
         return servletToMappings.computeIfAbsent(servletName, key -> new HashSet<>());
     }
 
-    Set<String> getServletsForMappings(String... mappings) {
-        return Arrays.stream(mappings)
-                     .filter(Objects::nonNull)
-                     .map(mappingToServlet::get)
-                     .filter(Objects::nonNull)
-                     .collect(toSet());
+    Set<String> filterExistingMappings(Collection<String> mappings) {
+        return mappings.stream()
+                       .filter(mappingToServlet::containsKey)
+                       .collect(Collectors.toSet());
     }
 
     private static String normalizeMapping(String mapping) {
         return URI.create(mapping).normalize().getPath();
     }
 
-    // spec 12.2
     private static boolean isValidMapping(String mapping) {
         if (mapping.isEmpty()) {
             return true;
