@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class WebAppLoaderTest {
     @Test
-    void loaderWithNoWebXmlReturnsALoadedWebApp() {
+    void loaderWithNoWebXmlLoads() {
         var classLoaderWithNoWebXml = classLoaderWithWebXml(null);
         var webAppLoader = new WebAppLoader(new DeploymentDescriptorAssembler(), classLoaderWithNoWebXml);
 
@@ -27,7 +27,7 @@ class WebAppLoaderTest {
     }
 
     @Test
-    void loaderWithBadWebXmlReturnsFailedOnLoadWebApp() {
+    void loaderWithBadWebXmlFails() {
         var classLoaderWithBadWebXml = classLoaderWithWebXml("<bad xml></no bueno>");
         var webAppLoader = new WebAppLoader(new DeploymentDescriptorAssembler(), classLoaderWithBadWebXml);
 
@@ -52,7 +52,7 @@ class WebAppLoaderTest {
     }
 
     @Test
-    void loadingClassNotImplementingServletReturnsFailedWebApp() {
+    void loadingClassNotImplementingServletFails() {
         var deploymentDescriptor = new DeploymentDescriptorBuilder()
                                        .servletDescriptor("simpleServlet", getClass().getName())
                                        .build();
@@ -65,7 +65,7 @@ class WebAppLoaderTest {
     }
 
     @Test
-    void loadingNonExistentServletClassReturnsFailedWebApp() {
+    void loadingNonExistentServletClassFails() {
         var deploymentDescriptor = new DeploymentDescriptorBuilder()
                                        .servletDescriptor("simpleServlet", "non.existent.Class")
                                        .build();
