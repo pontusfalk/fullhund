@@ -32,7 +32,6 @@ public class FullHundDynamicServletRegistration extends FullHundServletRegistrat
     @Override
     public void setRunAsRole(String roleName) {
         throw new NotImplementedException();
-
     }
 
     @Override

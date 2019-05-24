@@ -1,27 +1,35 @@
 package lk.pontusfa.fullhund.servlet;
 
 import javax.servlet.Registration;
-import javax.servlet.Servlet;
 import java.util.Map;
 import java.util.Set;
 
 class FullHundRegistration implements Registration {
-    private final String servletName;
-    private final Servlet servlet;
+    private final String className;
+    private final String name;
+    private Status status = Status.CREATED;
 
-    FullHundRegistration(String servletName, Servlet servlet) {
-        this.servletName = servletName;
-        this.servlet = servlet;
+    FullHundRegistration(String name, String className) {
+        this.name = name;
+        this.className = className;
+    }
+
+    Status getStatus() {
+        return status;
+    }
+
+    void setStatus(Status status) {
+        this.status = status;
     }
 
     @Override
     public String getName() {
-        return servletName;
+        return name;
     }
 
     @Override
     public String getClassName() {
-        return servlet != null ? servlet.getClass().getName() : null;
+        return className;
     }
 
     @Override
@@ -42,5 +50,12 @@ class FullHundRegistration implements Registration {
     @Override
     public Map<String, String> getInitParameters() {
         throw new NotImplementedException();
+    }
+
+    enum Status {
+        CREATED,
+        REGISTERED,
+        IN_SERVICE,
+        FAILED_ON_INIT
     }
 }

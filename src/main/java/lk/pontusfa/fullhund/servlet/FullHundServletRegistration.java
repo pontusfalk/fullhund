@@ -9,9 +9,11 @@ import static java.util.Collections.unmodifiableCollection;
 
 class FullHundServletRegistration extends FullHundRegistration implements ServletRegistration {
     private final ServletMappingResolver servletMappingResolver;
+    private final Servlet servlet;
 
     FullHundServletRegistration(String servletName, Servlet servlet, ServletMappingResolver servletMappingResolver) {
-        super(servletName, servlet);
+        super(servletName, servlet != null ? servlet.getClass().getName() : null);
+        this.servlet = servlet;
         this.servletMappingResolver = servletMappingResolver;
     }
 
@@ -43,5 +45,9 @@ class FullHundServletRegistration extends FullHundRegistration implements Servle
     @Override
     public String getRunAsRole() {
         throw new NotImplementedException();
+    }
+
+    Servlet getServlet() {
+        return servlet;
     }
 }
