@@ -1,5 +1,6 @@
 package lk.pontusfa.fullhund.servlet;
 
+import lk.pontusfa.fullhund.servlet.FullHundRegistration.Status;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,7 +22,7 @@ public class FullHundServletContext implements ServletContext {
 
     private final ClassLoader classLoader;
     private final ServletMappingResolver servletMappingResolver = new ServletMappingResolver();
-    private final Map<String, ServletRegistration> servletRegistrations = new HashMap<>();
+    private final Map<String, FullHundServletRegistration> servletRegistrations = new HashMap<>();
 
     public FullHundServletContext(ClassLoader classLoader) {
         this.classLoader = classLoader;
@@ -175,7 +176,7 @@ public class FullHundServletContext implements ServletContext {
     @SuppressWarnings("unchecked")
     //todo: handle servlets with servletName already added
     //todo: annotation introspection on servlet instance
-    public Dynamic addServlet(String servletName, String className) {
+    public FullHundDynamicServletRegistration addServlet(String servletName, String className) {
         if (className == null || className.isBlank()) {
             throw new IllegalArgumentException("servlet class must not be empty");
         }
@@ -196,7 +197,7 @@ public class FullHundServletContext implements ServletContext {
     @Override
     //todo: handle servlets with servletName already added
     //todo: annotation introspection on servlet instance
-    public Dynamic addServlet(String servletName, Servlet servlet) {
+    public FullHundDynamicServletRegistration addServlet(String servletName, Servlet servlet) {
         if (servlet == null) {
             throw new IllegalArgumentException("servlet must not be null");
         }
@@ -207,6 +208,7 @@ public class FullHundServletContext implements ServletContext {
 
         var registration = new FullHundDynamicServletRegistration(servletName, servlet, servletMappingResolver);
         servletRegistrations.put(servletName, registration);
+        registration.setStatus(Status.REGISTERED);
 
         return registration;
     }
@@ -214,7 +216,7 @@ public class FullHundServletContext implements ServletContext {
     @Override
     //todo: handle servlets with servletName already added
     //todo: annotation introspection on servlet instance
-    public Dynamic addServlet(String servletName, Class<? extends Servlet> servletClass) {
+    public FullHundDynamicServletRegistration addServlet(String servletName, Class<? extends Servlet> servletClass) {
         try {
             return addServlet(servletName, createServlet(servletClass));
         } catch (ServletException e) {
@@ -291,7 +293,6 @@ public class FullHundServletContext implements ServletContext {
     @Override
     public void setSessionTrackingModes(Set<SessionTrackingMode> sessionTrackingModes) {
         throw new NotImplementedException();
-
     }
 
     @Override
@@ -312,13 +313,11 @@ public class FullHundServletContext implements ServletContext {
     @Override
     public <T extends EventListener> void addListener(T t) {
         throw new NotImplementedException();
-
     }
 
     @Override
     public void addListener(Class<? extends EventListener> listenerClass) {
         throw new NotImplementedException();
-
     }
 
     @Override
@@ -339,7 +338,6 @@ public class FullHundServletContext implements ServletContext {
     @Override
     public void declareRoles(String... roleNames) {
         throw new NotImplementedException();
-
     }
 
     @Override
@@ -355,7 +353,6 @@ public class FullHundServletContext implements ServletContext {
     @Override
     public void setSessionTimeout(int sessionTimeout) {
         throw new NotImplementedException();
-
     }
 
     @Override
@@ -376,6 +373,23 @@ public class FullHundServletContext implements ServletContext {
     @Override
     public void setResponseCharacterEncoding(String encoding) {
         throw new NotImplementedException();
+    }
 
+    Collection<String> initialize() {
+        Collection<String> errors = new ArrayList<>();
+
+        for (FullHundServletRegistration servletRegistration : servletRegistrations.values()) {
+            try {
+                var servlet = servletRegistration.getServlet();
+                var config = new FullHundServletConfig(servletRegistration.getName(), this);
+                servlet.init(config);
+                servletRegistration.setStatus(Status.IN_SERVICE);
+            } catch (ServletException e) {
+                errors.add("failed to initialize " + servletRegistration.getName() + ": " + e.getLocalizedMessage());
+                servletRegistration.setStatus(Status.FAILED_ON_INIT);
+            }
+        }
+
+        return errors;
     }
 }

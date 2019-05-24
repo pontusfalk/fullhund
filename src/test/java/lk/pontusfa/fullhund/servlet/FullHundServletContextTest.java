@@ -1,14 +1,17 @@
 package lk.pontusfa.fullhund.servlet;
 
+import lk.pontusfa.fullhund.servlet.FullHundRegistration.Status;
 import lk.pontusfa.fullhund.util.servlets.SimpleHttpServlet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.servlet.Servlet;
-import javax.servlet.ServletContext;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 import javax.servlet.ServletRegistration.Dynamic;
+import javax.servlet.http.HttpServlet;
+import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -17,7 +20,7 @@ class FullHundServletContextTest {
     private static final String SERVLET_NAME = "servletName";
     private static final String SERVLET_CLASS_NAME = SimpleHttpServlet.class.getName();
 
-    private ServletContext servletContext;
+    private FullHundServletContext servletContext;
 
     @BeforeEach
     void setUp() {
@@ -161,5 +164,29 @@ class FullHundServletContextTest {
         servletContext.createServlet(SimpleHttpServlet.class);
 
         assertThat(servletContext.getServletRegistrations()).isEmpty();
+    }
+
+    @Test
+    void initializingServletPutsItInService() {
+        var registration = servletContext.addServlet(SERVLET_NAME, SERVLET_CLASS_NAME);
+
+        Collection<String> errors = servletContext.initialize();
+
+        assertThat(errors).isEmpty();
+        assertThat(registration.getStatus()).isEqualTo(Status.IN_SERVICE);
+    }
+
+    @Test
+    void initializingBadServletResultsInStatusFailedOnInit() {
+        var registration = servletContext.addServlet(SERVLET_NAME, new HttpServlet() {
+            public void init(ServletConfig config) throws ServletException {
+                throw new ServletException("init servlet exception");
+            }
+        });
+
+        Collection<String> errors = servletContext.initialize();
+
+        assertThat(errors).anyMatch(error -> error.contains("init servlet exception"));
+        assertThat(registration.getStatus()).isEqualTo(Status.FAILED_ON_INIT);
     }
 }
