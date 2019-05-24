@@ -10,9 +10,11 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 
+import static java.util.Collections.singleton;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class WebAppLoaderTest {
@@ -93,6 +95,32 @@ class WebAppLoaderTest {
 
         assertThat(webApp.getStatus()).isEqualTo(Status.FAILED_ON_LOAD);
         assertThat(webApp.getMessages()).containsExactly("servlet mapping conflicts: [/servletUrl]");
+    }
+
+    @Test
+    void exceptionWhenLoadingDescriptorFails() {
+        var exceptionMessage = "IO Exception during close";
+        InputStream exceptionStream = new InputStream() {
+            public int read() {
+                return 0;
+            }
+
+            public void close() throws IOException {
+                throw new IOException(exceptionMessage);
+            }
+        };
+        var classLoader = new FullHundClassLoader(explodedWarFile()) {
+            public InputStream getResourceAsStream(String name) {
+                return exceptionStream;
+            }
+        };
+        var deploymentDescriptor = new DeploymentDescriptorBuilder().build();
+        var webAppLoader = new WebAppLoader(assembler(deploymentDescriptor), classLoader);
+
+        WebApp webApp = webAppLoader.load();
+
+        assertThat(webApp.getStatus()).isEqualTo(Status.FAILED_ON_LOAD);
+        assertThat(webApp.getMessages()).containsExactly(singleton(exceptionMessage).toString());
     }
 
     private File explodedWarFile() {

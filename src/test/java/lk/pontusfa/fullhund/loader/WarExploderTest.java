@@ -1,5 +1,6 @@
 package lk.pontusfa.fullhund.loader;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -12,11 +13,20 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class WarExploderTest {
+    private WarExploder warExploder;
+
+    @AfterEach
+    void tearDown() {
+        if (warExploder != null && warExploder.getExplodedWarLocation().exists()) {
+            warExploder.getExplodedWarLocation().delete();
+        }
+    }
+
     @Test
     void explodedWarGetsCopied() throws IOException {
         var warPath = "war/one-servlet-one-mapping-xml-exploded/";
 
-        var warExploder = new WarExploder(warFile(warPath));
+        warExploder = new WarExploder(warFile(warPath));
         var copy = warExploder.getExplodedWarLocation().toPath();
 
         assertTrue(copy.resolve("WEB-INF/web.xml").toFile().exists());
@@ -28,7 +38,7 @@ class WarExploderTest {
     void warFileGetsCopied() throws IOException {
         var warPath = "war/one-servlet-one-mapping-xml.war";
 
-        var warExploder = new WarExploder(warFile(warPath));
+        warExploder = new WarExploder(warFile(warPath));
         var copy = warExploder.getExplodedWarLocation().toPath();
 
         assertTrue(copy.resolve("WEB-INF/web.xml").toFile().exists());
